@@ -63,6 +63,10 @@ if [ -d "/home/go" ]; then
     chown -R go:go /home/go
 fi
 
+# custom update: if your docker host is located behind a proxy, we set the dockerhost ip
+# in /etc/hosts to make the host proxy available for the gocd agent 
+echo -e "`/sbin/ip route|awk '/default/ { print  $3}'`\tdockerhost" >> /etc/hosts
+
 # no arguments are passed so assume user wants to run the gocd server
 # we prepend "/go-agent/agent.sh" to the argument list
 if [[ $# -eq 0 ]] ; then
