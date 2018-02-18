@@ -54,6 +54,15 @@ VOLUME_DIR="/godata"
 
 AGENT_WORK_DIR="/go"
 
+# custom update: the /godata and the /home/go folder need to be assigned to the go user
+if [ -d "/godata" ]; then
+    chown -R go:go /godata
+fi
+
+if [ -d "/home/go" ]; then
+    chown -R go:go /home/go
+fi
+
 # no arguments are passed so assume user wants to run the gocd server
 # we prepend "/go-agent/agent.sh" to the argument list
 if [[ $# -eq 0 ]] ; then
