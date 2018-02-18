@@ -63,6 +63,17 @@ if [ -d "/home/go" ]; then
     chown -R go:go /home/go
 fi
 
+# custom update: add access rights to the docker host socket for the go user
+DOCKER_SOCKET=/var/run/docker.sock
+DOCKER_GROUP=docker
+REGULAR_USER=go
+
+if [ -S ${DOCKER_SOCKET} ]; then
+  DOCKER_GID=$(stat -c '%g' ${DOCKER_SOCKET})
+  addgroup -g ${DOCKER_GID} ${DOCKER_GROUP}
+  adduser ${REGULAR_USER} ${DOCKER_GROUP}
+fi
+
 # custom update: if your docker host is located behind a proxy, we set the dockerhost ip
 # in /etc/hosts to make the host proxy available for the gocd agent 
 echo -e "`/sbin/ip route|awk '/default/ { print  $3}'`\tdockerhost" >> /etc/hosts
