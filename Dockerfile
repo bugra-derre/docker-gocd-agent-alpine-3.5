@@ -18,7 +18,7 @@
 ###############################################################################################
 
 FROM alpine:3.5
-MAINTAINER GoCD <go-cd-dev@googlegroups.com>
+MAINTAINER Bugra Derre <bugra.derre@gmail.com>
 
 LABEL gocd.version="18.1.0" \
   description="GoCD agent based on alpine version 3.5" \
