@@ -22,7 +22,7 @@ MAINTAINER Bugra Derre <bugra.derre@gmail.com>
 
 LABEL gocd.version="18.1.0" \
   description="GoCD agent based on alpine version 3.5" \
-  maintainer="GoCD <go-cd-dev@googlegroups.com>" \
+  maintainer="Bugra Derre <bugra.derre@gmail.com>" \
   gocd.full.version="18.1.0-5937" \
   gocd.git.sha="8a847b96ee8d38173f80178ed1285f0e53a970e0"
 
