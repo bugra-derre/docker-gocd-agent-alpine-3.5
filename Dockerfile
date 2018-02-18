@@ -37,6 +37,11 @@ ARG UID=1000
 ARG GID=1000
 
 RUN \
+# custom: install docker cli
+  curl -L -o /tmp/docker-17.12.0-ce.tgz https://download.docker.com/linux/static/stable/x86_64/docker-17.12.0-ce.tgz && \
+  tar -xz -C /tmp -f /tmp/docker-17.12.0-ce.tgz && \
+  mv /tmp/docker/docker /usr/bin && \
+  rm -rf /tmp/docker-17.12.0-ce /tmp/docker && \
 # add mode and permissions for files we added above
   chmod 0755 /usr/local/sbin/tini && \
   chown root:root /usr/local/sbin/tini && \
