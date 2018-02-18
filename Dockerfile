@@ -32,6 +32,8 @@ ADD https://github.com/tianon/gosu/releases/download/1.10/gosu-amd64 /usr/local/
 
 # force encoding
 ENV LANG=en_US.utf8
+# add JAVA HOME variable
+ENV JAVA_HOME /usr/lib/jvm/java-1.8-openjdk
 
 ARG UID=1000
 ARG GID=1000
