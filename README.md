@@ -1,10 +1,10 @@
 # GoCD Agent Docker image
 
-[GoCD agent](https://www.gocd.io) docker image based on alpine 3.5.
+Extending the [GoCD agent](https://www.gocd.io) docker image based on alpine 3.5 with JDK and the ability to spawn docker containers within the goCD container.
 
 # Issues, feedback?
 
-Please make sure to log them at https://github.com/gocd/docker-gocd-agent.
+Please make sure to log them at https://github.com/bugra-derre/docker-gocd-agent-alpine-3.5.
 
 # Changelog
 
@@ -29,14 +29,21 @@ This will start the GoCD agent and connect it the GoCD server specified by `GO_S
 If you have a [gocd-server container](https://hub.docker.com/r/gocd/gocd-server/) running and it's named `angry_feynman`, you can connect a gocd-agent container to it by doing:
 
 ```
-docker run -itd -e GO_SERVER_URL=https://$(docker inspect --format='{{(index (index .NetworkSettings.IPAddress))}}' angry_feynman):8154/go gocd/gocd-agent-alpine-3.5:v18.1.0
+docker run -itd -e GO_SERVER_URL=https://$(docker inspect --format='{{(index (index .NetworkSettings.IPAddress))}}' angry_feynman):8154/go bude/gocd-agent-alpine-3.5:v18.1.0
 ```
 OR
 
 If the docker container running the gocd server has ports mapped to the host,
 
 ```
-docker run -itd -e GO_SERVER_URL=https://<ip_of_host_machine>:$(docker inspect --format='{{(index (index .NetworkSettings.Ports "8154/tcp") 0).HostPort}}' angry_feynman)/go gocd/gocd-agent-alpine-3.5:v18.1.0
+docker run -itd -e GO_SERVER_URL=https://<ip_of_host_machine>:$(docker inspect --format='{{(index (index .NetworkSettings.Ports "8154/tcp") 0).HostPort}}' angry_feynman)/go bude/gocd-agent-alpine-3.5:v18.1.0
+```
+## Usage with docker spawning capabilities
+
+If you want to provide the docker spawning capabilities do it by doing:
+
+```
+docker run -d -e GO_SERVER_URL=... -v /var/run/docker.sock:/var/run/docker.sock bude/gocd-agent-alpine-3.5:v18.1.0
 ```
 
 # Available configuration options
@@ -49,7 +56,7 @@ docker run -d \
         -e AGENT_AUTO_REGISTER_RESOURCES=... \
         -e AGENT_AUTO_REGISTER_ENVIRONMENTS=... \
         -e AGENT_AUTO_REGISTER_HOSTNAME=... \
-        gocd/gocd-agent-alpine-3.5:v18.1.0
+        bude/gocd-agent-alpine-3.5:v18.1.0
 ```
 
 If the `AGENT_AUTO_REGISTER_*` variables are provided (we recommend that you do), then the agent will be automatically approved by the server. See the [auto registration docs](https://docs.gocd.io/current/advanced_usage/agent_auto_register.html) on the GoCD website.
@@ -63,7 +70,7 @@ This image will work well with the [docker elastic agent plugin](https://github.
 The GoCD agent will store all configuration, logs and perform builds in `/godata`. If you'd like to provide secure credentials like SSH private keys among other things, you can mount `/home/go`.
 
 ```
-docker run -v /path/to/godata:/godata -v /path/to/home-dir:/home/go gocd/gocd-agent-alpine-3.5:v18.1.0
+docker run -v /path/to/godata:/godata -v /path/to/home-dir:/home/go bude/gocd-agent-alpine-3.5:v18.1.0
 ```
 
 > **Note:** Ensure that `/path/to/home-dir` and `/path/to/godata` is accessible by the `go` user in container (`go` user - uid 1000).
@@ -73,7 +80,7 @@ docker run -v /path/to/godata:/godata -v /path/to/home-dir:/home/go gocd/gocd-ag
 JVM options can be tweaked using the environment variable `GO_AGENT_SYSTEM_PROPERTIES`.
 
 ```
-docker run -e GO_AGENT_SYSTEM_PROPERTIES="-Dfoo=bar" gocd/gocd-agent-alpine-3.5:v18.1.0
+docker run -e GO_AGENT_SYSTEM_PROPERTIES="-Dfoo=bar" bude/gocd-agent-alpine-3.5:v18.1.0
 ```
 
 # Under the hood
@@ -98,7 +105,7 @@ The GoCD server runs as the `go` user, the location of the various directories i
 # Bugs with Docker Agent Images 17.3.0
 
 * Anyone using our docker agent image as the base image for your customized image, and writing to `/home/go` as part of your Dockerfile, these changes in `/home/go` don't persist while you start the container with your custom image.
- A fix has been applied [here](https://github.com/gocd/docker-gocd-agent/commit/27b8772) and will be available for subsequent releases of the docker images.
+ A fix has been applied [here](https://github.com/bude/docker-gocd-agent/commit/27b8772) and will be available for subsequent releases of the docker images.
 
 
 # License
