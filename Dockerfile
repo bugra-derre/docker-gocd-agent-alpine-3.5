@@ -17,7 +17,7 @@
 # Please file any issues or PRs at https://github.com/gocd/docker-gocd-agent
 ###############################################################################################
 
-FROM alpine:3.5
+FROM node:8-alpine
 MAINTAINER Bugra Derre <bugra.derre@gmail.com>
 
 LABEL gocd.version="18.1.0" \
@@ -28,15 +28,13 @@ LABEL gocd.version="18.1.0" \
 
 ADD https://github.com/krallin/tini/releases/download/v0.16.1/tini-static-amd64 /usr/local/sbin/tini
 ADD https://github.com/tianon/gosu/releases/download/1.10/gosu-amd64 /usr/local/sbin/gosu
-
+ADD https://download.gocd.org/binaries/18.1.0-5937/generic/go-agent-18.1.0-5937.zip /tmp/go-agent.zip
+ADD https://download.docker.com/linux/static/stable/x86_64/docker-17.12.0-ce.tgz /tmp/docker-17.12.0-ce.tgz
 
 # force encoding
 ENV LANG=en_US.utf8
 # add JAVA HOME variable
 ENV JAVA_HOME /usr/lib/jvm/java-1.8-openjdk
-
-ARG UID=1000
-ARG GID=1000
 
 RUN \
 # add mode and permissions for files we added above
@@ -46,19 +44,15 @@ RUN \
   chown root:root /usr/local/sbin/gosu && \
 # add our user and group first to make sure their IDs get assigned consistently,
 # regardless of whatever dependencies get added
-  addgroup -g ${GID} go && \ 
-  adduser -D -u ${UID} -s /bin/bash -G go go && \
+  addgroup -g 1001 go && \ 
+  adduser -D -u 1001 -s /bin/bash -G go go && \
   apk --no-cache upgrade && \
-  apk add --no-cache openjdk8 git mercurial subversion openssh-client bash curl && \
-# download the zip file
-  curl --fail --location --silent --show-error "https://download.gocd.org/binaries/18.1.0-5937/generic/go-agent-18.1.0-5937.zip" > /tmp/go-agent.zip && \
-# unzip the zip file into /go-agent, after stripping the first path prefix
+  apk add --no-cache openjdk8 git mercurial subversion openssh-client bash && \
   unzip /tmp/go-agent.zip -d / && \
   mv go-agent-18.1.0 /go-agent && \
   rm /tmp/go-agent.zip && \
   mkdir -p /docker-entrypoint.d && \
 # custom: install docker cli
-  curl -L -o /tmp/docker-17.12.0-ce.tgz https://download.docker.com/linux/static/stable/x86_64/docker-17.12.0-ce.tgz && \
   tar -xz -C /tmp -f /tmp/docker-17.12.0-ce.tgz && \
   mv /tmp/docker/docker /usr/bin && \
   rm -rf /tmp/docker-17.12.0-ce /tmp/docker
